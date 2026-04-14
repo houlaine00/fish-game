@@ -106,7 +106,7 @@ canvas{display:block;position:fixed;top:0;left:0}
 <script>
 
 // ============ CONFIG ============
-const cv=document.getElementById('c'),cx=cv.getContext('2d');
+const cv=document.getElementById('c'),ctx=cv.getContext('2d');
 let W,H,CW=5000,CH=5000,camX=0,camY=0,run=false,tick=0,shake=0,mode='solo',combo=0;
 let audioCtx=null,musicOsc=null,isMuted=false;
 let P={},score=0,coins=+localStorage.getItem('fc_coins')||0,eaten=0,revives=1;
