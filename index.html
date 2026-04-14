@@ -172,6 +172,7 @@ function resize(){W=cv.width=window.innerWidth;H=cv.height=window.innerHeight}
 window.addEventListener('resize',resize);resize();
 
 function initGame(){
+if(!W||!H)resize();
 const cols=['#e17055','#fd79a8','#00b894','#00cec9','#fab1a0','#ffeaa7','#dfe6e9','#a29bfe','#ff6b6b','#feca57'];
 decors=[];for(let i=0;i<120;i++)decors.push({x:Math.random()*CW,y:Math.random()*CH,type:['coral','seaweed','rock','shell','starfish','anemone','treasure'][Math.floor(Math.random()*7)],scale:0.3+Math.random()*1.2,color:cols[Math.floor(Math.random()*cols.length)],phase:Math.random()*100,sway:0.5+Math.random()});
 bgFish=[];for(let i=0;i<100;i++)bgFish.push({x:Math.random()*CW,y:Math.random()*CH,size:1+Math.random()*3,color:'rgba(255,255,255,'+(.03+Math.random()*.1)+')',spd:0.2+Math.random()*0.5,ang:Math.random()*Math.PI*2});
@@ -357,7 +358,7 @@ function backMenu(){run=false;document.getElementById('over').style.display='non
 function stopMusic(){isMuted=true}
 
 // Init
-document.addEventListener('DOMContentLoaded',()=>{document.getElementById('hcn').textContent=coins});
+document.addEventListener('DOMContentLoaded',()=>{resize();document.getElementById('hcn').textContent=coins});
 </script>
 </body>
 </html>
