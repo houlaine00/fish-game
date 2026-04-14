@@ -50,7 +50,7 @@ canvas{display:block;position:fixed;top:0;left:0}
 .br{padding:14px 45px;border:none;border-radius:25px;font-size:15px;font-weight:700;cursor:pointer;color:#fff;margin:5px}
 .bv{background:linear-gradient(90deg,#9b59b6,#8e44ad)}
 .bh{background:linear-gradient(90deg,#0984e3,#74b9ff)}
-#fsb{position:fixed;top:8px;right:8px;width:44px;height:44px;background:rgba(0,0,0,.5);border:1px solid rgba(255,255,255,.2);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:20px;z-index:50;pointer-events:auto;color:#fff}
+#menu{display:flex}#fsb{position:fixed;top:8px;right:8px;width:44px;height:44px;background:rgba(0,0,0,.5);border:1px solid rgba(255,255,255,.2);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:20px;z-index:50;pointer-events:auto;color:#fff}
 #combo{position:fixed;top:30%;left:50%;transform:translate(-50%,-50%);font:bold 48px monospace;color:#feca57;text-shadow:0 0 30px rgba(254,202,87,.8);pointer-events:none;z-index:20;opacity:0}
 .ft{position:fixed;pointer-events:none;font:bold 16px sans-serif;z-index:25;animation:fu .8s forwards;text-shadow:0 1px 4px rgba(0,0,0,.5)}
 @keyframes fu{0%{opacity:1;transform:translateY(0) scale(1)}50%{transform:translateY(-20px) scale(1.1)}100%{opacity:0;transform:translateY(-50px) scale(.8)}}
@@ -71,7 +71,7 @@ canvas{display:block;position:fixed;top:0;left:0}
 <div class="hl"><div class="sc" id="hsc">0</div><div class="inf">Lv.<span id="hlv">1</span> <span id="hst">小鱼苗</span></div><div class="bw"><div class="bf xf" id="hxp" style="width:0%"></div></div></div>
 <div class="hr"><div class="cb">💎<span id="hcn">0</span></div><div class="bw"><div class="bf hf" id="hhp" style="width:100%"></div></div></div>
 </div>
-<div class="ob" id="hob">关卡 1/7</div>
+<div class="ob" id="hob" style="display:none">关卡 1/7</div>
 <div id="ctrl" style="display:none">
 <div id="joy"><div id="jk"></div></div>
 <div id="bb" ontouchstart="biteDown(event)" ontouchend="biteUp()" onmousedown="biteDown(event)" onmouseup="biteUp()"><div class="i">🦷</div><div class="t">撕咬</div></div>
