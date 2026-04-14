@@ -20,7 +20,7 @@ canvas{display:block;position:fixed;top:0;left:0}
 .cb{background:rgba(0,0,0,.6);padding:5px 14px;border-radius:18px;font:bold 15px;color:#feca57;border:1px solid rgba(254,202,87,.25)}
 .ob{position:fixed;top:60px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.7);padding:6px 18px;border-radius:18px;font-size:12px;border:1px solid rgba(255,255,255,.15);color:#fff;white-space:nowrap;z-index:10;pointer-events:none}
 #ctrl{position:fixed;inset:0;z-index:5;pointer-events:none}
-#joy{position:absolute;bottom:90px;left:25px;width:110px;height:110px;background:rgba(255,255,255,.1);border-radius:50%;border:2px solid rgba(255,255,255,.2);pointer-events:auto}
+#joy{position:absolute;width:110px;height:110px;background:rgba(255,255,255,.1);border-radius:50%;border:2px solid rgba(255,255,255,.2);pointer-events:auto;display:none}
 #jk{position:absolute;width:46px;height:46px;background:rgba(255,255,255,.35);border-radius:50%;top:32px;left:32px}
 #bb{position:absolute;bottom:75px;right:20px;width:100px;height:100px;background:radial-gradient(circle,#ff6b6b,#c0392b);border-radius:50%;border:3px solid rgba(255,255,255,.35);display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;font-weight:bold;box-shadow:0 6px 25px rgba(231,76,60,.5);pointer-events:auto;cursor:pointer}
 #bb:active{transform:scale(.85)}
@@ -183,9 +183,11 @@ camX=P.x-W/2;camY=P.y-H/2;mobs=[];nets=[];parts=[];boss=null;eaten=0;score=0;cur
 
 // ============ CONTROLS ============
 const joyEl=document.getElementById('joy'),joyKnob=document.getElementById('jk');
-joyEl.addEventListener('touchstart',e=>{e.preventDefault();initAudio();const r=joyEl.getBoundingClientRect();joy.cx=r.left+55;joy.cy=r.top+55;joy.active=true;updJoy(e.touches[0].clientX,e.touches[0].clientY)},false);
-joyEl.addEventListener('touchmove',e=>{e.preventDefault();if(!joy.active)return;updJoy(e.touches[0].clientX,e.touches[0].clientY)},false);
-joyEl.addEventListener('touchend',e=>{e.preventDefault();joy.active=false;joy.dx=0;joy.dy=0;joyKnob.style.left='32px';joyKnob.style.top='32px'},false);
+// Floating joystick - appears where you touch
+let joyTouchId=null;
+canvas.addEventListener('touchstart',e=>{if(!run)return;e.preventDefault();initAudio();const t=e.changedTouches[0];joyTouchId=t.identifier;joy.cx=t.clientX;joy.cy=t.clientY;joy.active=true;joyEl.style.display='block';joyEl.style.left=(t.clientX-55)+'px';joyEl.style.top=(t.clientY-55)+'px';joyKnob.style.left='32px';joyKnob.style.top='32px';updJoy(t.clientX,t.clientY)},false);
+canvas.addEventListener('touchmove',e=>{e.preventDefault();if(!joy.active)return;for(let t of e.changedTouches){if(t.identifier===joyTouchId){updJoy(t.clientX,t.clientY)}}},false);
+canvas.addEventListener('touchend',e=>{e.preventDefault();for(let t of e.changedTouches){if(t.identifier===joyTouchId){joy.active=false;joy.dx=0;joy.dy=0;joyTouchId=null;joyEl.style.display='none';break}}},false);
 function updJoy(x,y){let dx=x-joy.cx,dy=y-joy.cy,d=Math.hypot(dx,dy);const max=38;if(d>max){dx=dx/d*max;dy=dy/d*max}joyKnob.style.left=(32+dx)+'px';joyKnob.style.top=(32+dy)+'px';joy.dx=dx/max;joy.dy=dy/max}
 
 function biteDown(e){if(e)e.preventDefault();if(!run)return;initAudio();P.biting=true;P.bitet=15;P.jaw=1;sfx('bite');const br=P.r*2.5,ba=0.7;let hit=false;
@@ -207,7 +209,7 @@ function checkEvo(){const nx=evo[P.lv+1];if(!nx)return;if(P.xp>=nx.xp){P.lv++;P.
 function initLevel(){mobs=[];boss=null;const l=levels[curLvl];document.getElementById('hob').textContent=l.name+' | 吃鱼 '+eaten+'/'+l.need;for(let i=0;i<30;i++)spawnMobNearPlayer();sfx('evolve')}
 function spawnMobNearPlayer(){const l=levels[curLvl],pool=l.fish,types=mTypes.slice(0,Math.min(pool+5,18)),mt=types[Math.floor(Math.random()*types.length)];const angle=Math.random()*Math.PI*2,dist=100+Math.random()*400;let x=P.x+Math.cos(angle)*dist,y=P.y+Math.sin(angle)*dist;mobs.push({x,y,n:mt.n,r:mt.r,hp:mt.hp,maxHp:mt.hp,c:mt.c,spd:mt.spd,xp:mt.xp,agro:mt.agro,dmg:mt.dmg||0,ang:Math.random()*Math.PI*2,phase:Math.random()*100,lvl:Math.floor(Math.random()*3)})}
 
-function spawnMob(){if(mobs.length>60)return;const l=levels[curLvl],pool=l.fish,types=mTypes.slice(0,Math.min(pool+5,18)),mt=types[Math.floor(Math.random()*types.length)];let x,y;if(Math.random()<0.5){x=Math.random()<0.5?camX-100:camX+W+100;y=camY+Math.random()*H}else{x=camX+Math.random()*W;y=Math.random()<0.5?camY-100:camY+H+100}mobs.push({x,y,n:mt.n,r:mt.r,hp:mt.hp,maxHp:mt.hp,c:mt.c,spd:mt.spd,xp:mt.xp,agro:mt.agro,dmg:mt.dmg||0,ang:Math.random()*Math.PI*2,phase:Math.random()*100,lvl:Math.floor(Math.random()*3)})}
+function spawnMob(){if(mobs.length>60)return;const l=levels[curLvl],pool=l.fish,types=mTypes.slice(0,Math.min(pool+5,18)),mt=types[Math.floor(Math.random()*types.length)];let x,y,side=Math.floor(Math.random()*4);if(side===0){x=camX-50;y=camY+Math.random()*H}else if(side===1){x=camX+W+50;y=camY+Math.random()*H}else if(side===2){x=camX+Math.random()*W;y=camY-50}else{x=camX+Math.random()*W;y=camY+H+50}x=Math.max(10,Math.min(CW-10,x));y=Math.max(10,Math.min(CH-10,y));mobs.push({x,y,n:mt.n,r:mt.r,hp:mt.hp,maxHp:mt.hp,c:mt.c,spd:mt.spd,xp:mt.xp,agro:mt.agro,dmg:mt.dmg||0,ang:Math.random()*Math.PI*2,phase:Math.random()*100,lvl:Math.floor(Math.random()*3)})}
 
 function trySpawnBoss(){const l=levels[curLvl];if(!boss&&eaten>=l.need){let sx,sy;if(Math.random()<0.5){sx=Math.random()<0.5?camX-200:camX+W+200;sy=camY+Math.random()*H}else{sx=camX+Math.random()*W;sy=Math.random()<0.5?camY-200:camY+H+200}boss={x:sx,y:sy,r:l.bossR,hp:l.bossHp,maxHp:l.bossHp,c:l.c,spd:2,ang:0,phase:0,name:l.bn};sfx('boss');for(let k=0;k<3;k++)setTimeout(()=>float(camX+W/2,camY+H/2-80,'⚠️ BOSS出现!','#ff0000',22),k*400)}}
 
